@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --color-warm-cream: #FDF6EC;
+  --color-soft-ivory: #FFFBF3;
+  --color-warm-sand: #E8DCC8;
+  --color-deep-espresso: #3A2E27;
+  --color-muted-clay: #8A7A6D;
+  --color-terracotta: #E4753A;
+  --color-warm-amber: #F2A93B;
+
+  --color-stream-pcm: #3B82F6;
+  --color-stream-pcb: #4CAF7D;
+  --color-stream-commerce: #F2A93B;
+  --color-stream-arts: #E4753A;
+  --color-stream-vocational: #8B6BB8;
+  --color-stream-emerging: #3FA6A0;
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: #FDF6EC;
+    color: #3A2E27;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom scrollbars and utility styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FDF6EC;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E8DCC8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8A7A6D;
+}
+
+/* Roadmap tree line connector styles */
+.tree-connector-line {
+  position: absolute;
+  background-color: #E8DCC8;
+  z-index: 0;
+}
+

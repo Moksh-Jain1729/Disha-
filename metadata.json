@@ -1,0 +1,6 @@
+{
+  "name": "Disha: Life After 10th",
+  "description": "An interactive post-10th career & stream guidance platform for Indian students with visual roadmaps, aptitude quiz, and resource hub.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
