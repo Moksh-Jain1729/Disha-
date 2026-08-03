@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Board, StreamId, RoadmapNode, NodeStatus } from '../types';
+import { StreamId, RoadmapNode, NodeStatus } from '../types';
 import { STREAMS } from '../data/streamsData';
 import { ROADMAP_NODES } from '../data/roadmapData';
 import { RESOURCES } from '../data/resourcesData';
-import { BoardBanner } from '../components/BoardBanner';
 import { BenefitBubble } from '../components/BenefitBubble';
 import { TreeViewer } from '../components/TreeViewer';
 import { NodeDetailDrawer } from '../components/NodeDetailDrawer';
-import { Sparkles, HardDrive, Filter, Search, RotateCcw } from 'lucide-react';
+import { Sparkles, HardDrive, Search, RotateCcw, X } from 'lucide-react';
 
 interface ExplorePageProps {
   initialStreamId?: string;
-  board: Board;
-  onSelectBoard: (board: Board) => void;
   progressState: Record<string, NodeStatus>;
   onStatusChange: (nodeId: string, status: NodeStatus) => void;
   onResetProgress: () => void;
@@ -20,8 +17,6 @@ interface ExplorePageProps {
 
 export const ExplorePage: React.FC<ExplorePageProps> = ({
   initialStreamId,
-  board,
-  onSelectBoard,
   progressState,
   onStatusChange,
   onResetProgress,
@@ -32,23 +27,31 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
   const [selectedNode, setSelectedNode] = useState<RoadmapNode | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Update selected stream if prop changes
+  // Update selected stream if initialStreamId prop changes
   useEffect(() => {
-    if (initialStreamId && ['pcm', 'pcb', 'commerce', 'arts', 'vocational', 'emerging'].includes(initialStreamId)) {
+    if (
+      initialStreamId &&
+      ['pcm', 'pcb', 'commerce', 'arts', 'vocational', 'emerging'].includes(initialStreamId)
+    ) {
       setSelectedStreamId(initialStreamId as StreamId);
     }
   }, [initialStreamId]);
 
   const currentStream = STREAMS.find((s) => s.id === selectedStreamId) || STREAMS[0];
 
-  // Search filter across nodes
+  // Global Search filter across all nodes
   const filteredNodes = searchQuery.trim()
-    ? ROADMAP_NODES.filter(
-        (n) =>
-          n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          n.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          n.fullForm?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? ROADMAP_NODES.filter((n) => {
+        const q = searchQuery.toLowerCase();
+        return (
+          n.title.toLowerCase().includes(q) ||
+          n.description.toLowerCase().includes(q) ||
+          n.fullForm?.toLowerCase().includes(q) ||
+          n.eligibility?.toLowerCase().includes(q) ||
+          n.examPattern?.toLowerCase().includes(q) ||
+          n.careerScope?.toLowerCase().includes(q)
+        );
+      })
     : ROADMAP_NODES;
 
   return (
@@ -65,20 +68,28 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
               </h1>
             </div>
             <p className="text-xs sm:text-sm text-[#8A7A6D]">
-              Interactive tree diagrams & mobile-friendly lists mapping post-10th paths, degrees, and competitive entrance exams.
+              Expandable career lists mapping post-10th paths, degrees, polytechnics, and competitive entrance exams in India.
             </p>
           </div>
 
           {/* Search Input Box */}
-          <div className="relative w-full sm:w-64">
-            <Search className="w-4 h-4 text-[#8A7A6D] absolute left-3 top-3" />
+          <div className="relative w-full sm:w-72">
+            <Search className="w-4 h-4 text-[#8A7A6D] absolute left-3.5 top-3" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search exam (JEE, NEET, CA)..."
-              className="w-full pl-9 pr-4 py-2 text-xs bg-[#FFFBF3] border border-[#E8DCC8] rounded-xl focus:outline-none focus:border-[#E4753A] text-[#3A2E27]"
+              placeholder="Search exam or keyword (JEE, NEET, CA, CLAT, ITI)..."
+              className="w-full pl-9 pr-8 py-2 text-xs bg-[#FFFBF3] border border-[#E8DCC8] rounded-xl focus:outline-none focus:border-[#E4753A] text-[#3A2E27]"
             />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-2.5 text-[#8A7A6D] hover:text-[#E4753A]"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -86,11 +97,14 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
       {/* STREAM SELECTOR TABS (6 STREAM PILLS) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         {STREAMS.map((s) => {
-          const isActive = s.id === selectedStreamId;
+          const isActive = s.id === selectedStreamId && !searchQuery.trim();
           return (
             <button
               key={s.id}
-              onClick={() => setSelectedStreamId(s.id)}
+              onClick={() => {
+                setSelectedStreamId(s.id);
+                setSearchQuery(''); // clear search when switching streams manually
+              }}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold shrink-0 transition-all border ${
                 isActive
                   ? 'text-white shadow-xs'
@@ -108,18 +122,15 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
         })}
       </div>
 
-      {/* BOARD BANNER */}
-      <BoardBanner board={board} onSelectBoard={onSelectBoard} />
+      {/* STREAM BENEFIT BUBBLE (Shown when no search is active) */}
+      {!searchQuery.trim() && <BenefitBubble stream={currentStream} />}
 
-      {/* STREAM BENEFIT BUBBLE */}
-      <BenefitBubble stream={currentStream} />
-
-      {/* LOCAL STORAGE HONEST PROGRESS NOTICE */}
+      {/* LOCAL STORAGE PROGRESS NOTICE */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-[#FFFBF3] border border-[#E8DCC8] rounded-2xl text-xs text-[#8A7A6D]">
         <div className="flex items-center gap-2">
           <HardDrive className="w-4 h-4 text-[#E4753A] shrink-0" />
           <span>
-            <strong>Device Storage:</strong> Your progress & explored nodes are saved on this browser only — it won't carry over if you switch phones or clear your browser data.
+            <strong>Device Progress:</strong> Explored nodes & marks are saved locally on this browser.
           </span>
         </div>
 
@@ -132,13 +143,15 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
         </button>
       </div>
 
-      {/* TREE VIEWER (DUAL DESKTOP TREE + MOBILE ACCORDION) */}
+      {/* STREAM EXPLORE EXPANDABLE LIST VIEWER */}
       <TreeViewer
         nodes={filteredNodes}
         activeStream={currentStream}
         progressState={progressState}
         onStatusChange={onStatusChange}
         onSelectNode={(node) => setSelectedNode(node)}
+        searchQuery={searchQuery}
+        onClearSearch={() => setSearchQuery('')}
       />
 
       {/* NODE DETAIL OVERLAY DRAWER */}

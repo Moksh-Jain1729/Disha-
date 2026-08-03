@@ -19,10 +19,10 @@ export const ResourcesPage: React.FC<ResourcesPageProps> = ({ onNavigate }) => {
   ];
 
   const typePills = [
-    { id: 'all', label: 'All Types' },
-    { id: 'Watch', label: 'Watch (Video)' },
-    { id: 'Read', label: 'Read (Docs/PDFs)' },
-    { id: 'Try', label: 'Try (Portals/Forums)' },
+    { id: 'all', label: 'All Resources' },
+    { id: 'Watch', label: 'Watch (YouTube Channels)' },
+    { id: 'Try', label: 'Try (Reddit & Forums)' },
+    { id: 'Read', label: 'Read (Official Portals)' },
   ];
 
   // Filter resources

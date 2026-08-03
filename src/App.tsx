@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Board, StreamId, NodeStatus } from './types';
+import React, { useState } from 'react';
+import { StreamId, NodeStatus } from './types';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
@@ -13,16 +13,6 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [selectedStreamId, setSelectedStreamId] = useState<string>('pcm');
 
-  // Board State (Persisted in localStorage)
-  const [board, setBoard] = useState<Board>(() => {
-    try {
-      const saved = localStorage.getItem('disha_board');
-      return (saved as Board) || 'CBSE';
-    } catch {
-      return 'CBSE';
-    }
-  });
-
   // Progress Tracking State (Persisted in localStorage)
   const [progressState, setProgressState] = useState<Record<string, NodeStatus>>(() => {
     try {
@@ -32,16 +22,6 @@ export default function App() {
       return {};
     }
   });
-
-  // Save Board Selection
-  const handleSelectBoard = (newBoard: Board) => {
-    setBoard(newBoard);
-    try {
-      localStorage.setItem('disha_board', newBoard);
-    } catch (e) {
-      console.warn('Unable to write board selection to localStorage', e);
-    }
-  };
 
   // Update Node Status
   const handleStatusChange = (nodeId: string, status: NodeStatus) => {
@@ -87,8 +67,6 @@ export default function App() {
       <Navbar
         currentTab={currentTab}
         onNavigate={handleNavigate}
-        board={board}
-        onSelectBoard={handleSelectBoard}
         exploredCount={exploredCount}
       />
 
@@ -97,16 +75,12 @@ export default function App() {
         {currentTab === 'home' && (
           <HomePage
             onNavigate={handleNavigate}
-            board={board}
-            onSelectBoard={handleSelectBoard}
           />
         )}
 
         {currentTab === 'roadmaps' && (
           <ExplorePage
             initialStreamId={selectedStreamId}
-            board={board}
-            onSelectBoard={handleSelectBoard}
             progressState={progressState}
             onStatusChange={handleStatusChange}
             onResetProgress={handleResetProgress}

@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
-import { Board } from '../types';
 import { Compass, BookOpen, BrainCircuit, Library, Info, Menu, X, CheckCircle2 } from 'lucide-react';
 
 interface NavbarProps {
   currentTab: string;
   onNavigate: (tab: string, streamId?: string) => void;
-  board: Board;
-  onSelectBoard: (board: Board) => void;
   exploredCount: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
   onNavigate,
-  board,
-  onSelectBoard,
   exploredCount,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -82,26 +77,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Board Selector & Device Progress Counter */}
+          {/* Device Progress Counter */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* Board Selector */}
-            <div className="flex items-center gap-1 bg-[#FFFBF3] p-1 rounded-xl border border-[#E8DCC8] text-xs">
-              <span className="text-[10px] font-bold text-[#8A7A6D] px-2 uppercase">Board:</span>
-              {(['CBSE', 'ICSE', 'SSC'] as Board[]).map((b) => (
-                <button
-                  key={b}
-                  onClick={() => onSelectBoard(b)}
-                  className={`px-2 py-1 font-bold rounded-lg transition-all ${
-                    board === b
-                      ? 'bg-[#E4753A] text-white'
-                      : 'text-[#3A2E27] hover:bg-[#E8DCC8]/40'
-                  }`}
-                >
-                  {b}
-                </button>
-              ))}
-            </div>
-
             {/* Saved Nodes Pill */}
             {exploredCount > 0 && (
               <div 
@@ -129,23 +106,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#FFFBF3] border-b border-[#E8DCC8] px-4 py-4 space-y-3 animate-in slide-in-from-top duration-200">
-          <div className="flex items-center justify-between pb-2 border-b border-[#E8DCC8]">
-            <span className="text-xs font-bold text-[#8A7A6D] uppercase">Select Board:</span>
-            <div className="flex items-center gap-1 bg-[#FDF6EC] p-1 rounded-xl border border-[#E8DCC8]">
-              {(['CBSE', 'ICSE', 'SSC'] as Board[]).map((b) => (
-                <button
-                  key={b}
-                  onClick={() => onSelectBoard(b)}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg ${
-                    board === b ? 'bg-[#E4753A] text-white' : 'text-[#3A2E27]'
-                  }`}
-                >
-                  {b}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <nav className="flex flex-col gap-1.5">
             {navItems.map((item) => {
               const Icon = item.icon;

@@ -1,19 +1,13 @@
 import React from 'react';
 import { STREAMS } from '../data/streamsData';
-import { Board, StreamId } from '../types';
-import { BoardBanner } from '../components/BoardBanner';
 import { Compass, BrainCircuit, BookOpen, Sparkles, ArrowRight, ShieldAlert, CheckCircle2, HelpCircle } from 'lucide-react';
 
 interface HomePageProps {
   onNavigate: (tab: string, streamId?: string) => void;
-  board: Board;
-  onSelectBoard: (board: Board) => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   onNavigate,
-  board,
-  onSelectBoard,
 }) => {
   return (
     <div className="space-y-12 py-4">
@@ -83,17 +77,6 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
         </div>
-      </section>
-
-      {/* BOARD CONTEXT SELECTOR & BANNER */}
-      <section>
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-lg font-bold text-[#3A2E27]">
-            Board Guidance Banner
-          </h2>
-          <span className="text-xs text-[#8A7A6D]">Tailored for your board pattern</span>
-        </div>
-        <BoardBanner board={board} onSelectBoard={onSelectBoard} />
       </section>
 
       {/* MINI INTERACTIVE FLOW PREVIEW */}
